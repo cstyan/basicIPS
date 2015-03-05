@@ -29,7 +29,7 @@ setInterval(function(){
         if(difference > unbanTime){
             console.log("Unbanning " + index + ".");
             shell.exec("iptables -D INPUT -s " + index + " -j DROP");
-            bannedIPs.splice(index, 1);
+            delete bannedIPs(index);
         }
     }
 }, 60000);
