@@ -17,19 +17,22 @@ if(!process.argv[2] || !process.argv[3]){
     process.exit(1);
 }
 
+//check to see if we need to unban everyone every minute
 setInterval(function(){
     //check to see if we should unban people
     currentTime = new Date();
     for(var index in bannedIPs){
         var indexTime = bannedIPs[index];
         var difference = currentTime - indexTime;
+        //if difference between current time and time
+        //someone was banned, then unban them, son
         if(difference > unbanTime){
             console.log("Unbanning " + index + ".");
             shell.exec("iptables -D INPUT -s " + index + " -j DROP");
             bannedIPs.splice(index, 1);
         }
     }
-}, 5000);
+}, 60000);
 
 var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
     this.ipAddress = ipAddress;
