@@ -127,9 +127,9 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 var timeDifference = (timeOne - timeTwo) / 1000;
                 //if the previous time difference is equal to this time difference
                 if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
-                    countSlowFails++;
+                    countSlowFails = countSlowFails + 1;
                 }
-                if(countSlowFails == timeToCheck){
+                if(countSlowFails >= timeToCheck){
                     shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                     console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
                     console.log(this.ipAddress + " has been banned");
