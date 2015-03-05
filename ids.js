@@ -44,28 +44,28 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
             if(timeDifference <= timeBeforeBan){
                 shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                 console.log(this.ipAddress + " has been banned");
-            } else {
-                //check for slow scan
-                var countSlowFails = 0;
-                //check for slow scan/patterns
-                for(var i = 0; i < timeToCheck; i++){
-                    var timeOne = this.dateTime[this.dateTime.length - 1 - i]
-                    var timeTwo = this.dateTime[this.dateTime.length - 1 - (i + 1)]
-                    var timeDifference = (timeOne - timeTwo) / 1000;
-                    //if the previous time difference is equal to this time difference
-                    if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
-                        console.log("Incrementing countSlowFails.");
-                        console.log("countSlowFails currently at: " + countSlowFails);
-                        countSlowFails++;
-                    }
-                    if(countSlowFails == timeToCheck){
-                        shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
-                        console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
-                        console.log(this.ipAddress + " has been banned");
-                        //iptables -D INPUT -s this.ipAddress -j DROP
-                    }
-                    prev = timeDifference;
+            }
+            
+            //check for slow scan
+            var countSlowFails = 0;
+            //check for slow scan/patterns
+            for(var i = 0; i < timeToCheck; i++){
+                var timeOne = this.dateTime[this.dateTime.length - 1 - i]
+                var timeTwo = this.dateTime[this.dateTime.length - 1 - (i + 1)]
+                var timeDifference = (timeOne - timeTwo) / 1000;
+                //if the previous time difference is equal to this time difference
+                if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
+                    console.log("Incrementing countSlowFails.");
+                    console.log("countSlowFails currently at: " + countSlowFails);
+                    countSlowFails++;
                 }
+                if(countSlowFails == timeToCheck){
+                    shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
+                    console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
+                    console.log(this.ipAddress + " has been banned");
+                    //iptables -D INPUT -s this.ipAddress -j DROP
+                }
+                prev = timeDifference;
             }
         }
     }
