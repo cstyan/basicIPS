@@ -36,6 +36,7 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
         // check last n date Time's that they violated and see if
         // we need to ban them
         if(this.dateTime.length > timeToCheck){
+            console.log("More attempts than allowed detected.");
             var lastLog = this.dateTime[this.dateTime.length - 1];
             var firstLog = this.dateTime[this.dateTime.length - 1 - timeToCheck];
             var timeDifference = (lastLog - firstLog) / 1000;
@@ -45,7 +46,7 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                 console.log(this.ipAddress + " has been banned");
             }
-            
+
             //check for slow scan
             var countSlowFails = 0;
             //check for slow scan/patterns
