@@ -60,7 +60,7 @@ setInterval(function(){
         //someone was banned, then unban them, son
         if(difference > unbanTime){
             console.log("Unbanning " + index + ".");
-            stream.write(""Unbanning " + index + "."");
+            stream.write("Unbanning " + index + "."");
             shell.exec("/usr/sbin/iptables -D INPUT -s " + index + " -j DROP");
             delete bannedIPs[index];
         }
