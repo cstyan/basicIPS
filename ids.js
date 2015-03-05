@@ -31,7 +31,7 @@ setInterval(function(){
             shell.exec("iptables -D INPUT -s " + index + " -j DROP");
             console.log(bannedIPs[index]);
             console.log(bannedIPs);
-            bannedIPs.splice(index, 1);
+            bannedIPs.splice(index - 1, 1);
             console.log(bannedIPs);
         }
     }
