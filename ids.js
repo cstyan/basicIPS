@@ -38,7 +38,7 @@ var unbanInterval = process.argv[5];
 
 if(!process.argv[2] || !process.argv[3]){
     console.log("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds intervalToCheckForUnbansInMilliseconds");
-    stream.write("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds intervalToCheckForUnbansInMilliseconds");
+    stream.write("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds intervalToCheckForUnbansInMilliseconds \n");
     process.exit(1);
 }
 
@@ -60,7 +60,7 @@ setInterval(function(){
         //someone was banned, then unban them, son
         if(difference > unbanTime){
             console.log("Unbanning " + index + ".");
-            stream.write("Unbanning " + index + ".");
+            stream.write("Unbanning " + index + ".\n");
             shell.exec("/usr/sbin/iptables -D INPUT -s " + index + " -j DROP");
             delete bannedIPs[index];
         }
@@ -112,7 +112,7 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
         // we need to ban them
         if(this.dateTime.length > timeToCheck){
             console.log("More attempts than allowed detected on IP: " + this.ipAddress);
-            stream.write("More attempts than allowed detected on IP: " + this.ipAddress);
+            stream.write("More attempts than allowed detected on IP: " + this.ipAddress + "\n");
             var lastLog = this.dateTime[this.dateTime.length - 1];
             var firstLog = this.dateTime[this.dateTime.length - 1 - timeToCheck];
             var timeDifference = (lastLog - firstLog) / 1000;
@@ -120,8 +120,8 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
             //is less than the time allowed for failed attempts set by user
             if(timeDifference <= timeBeforeBan){
                 shell.exec("/usr/sbin/iptables -A INPUT -s " + this.ipAddress + " -j DROP");
-                console.log(this.ipAddress + " has been banned");
-                stream.write(this.ipAddress + " has been banned");
+                console.log(this.ipAddress + " has been banned.");
+                stream.write(this.ipAddress + " has been banned.\n");
                 //add to banned array
                 bannedIPs[this.ipAddress] = new Date();
             }
@@ -140,9 +140,9 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 if(countSlowFails >= timeToCheck){
                     shell.exec("/usr/sbin/iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                     console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
-                    console.log(this.ipAddress + " has been banned");
-                    stream.write("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
-                    stream.write(this.ipAddress + " has been banned");
+                    console.log(this.ipAddress + " has been banned.");
+                    stream.write("Slow scan via periodical attempts detected from IP: " + this.ipAddress + "\n");
+                    stream.write(this.ipAddress + " has been banned.\n");
                     //add to banned array
                     bannedIPs[this.ipAddress] = new Date();
                 }
