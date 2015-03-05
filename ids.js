@@ -23,6 +23,8 @@ setInterval(function(){
     currentTime = new Date();
     for(var index in bannedIPs){
         var indexTime = bannedIPs[index];
+
+        if(index )
         var difference = currentTime - indexTime;
         //if difference between current time and time
         //someone was banned, then unban them, son
@@ -31,7 +33,7 @@ setInterval(function(){
             shell.exec("iptables -D INPUT -s " + index + " -j DROP");
             console.log(bannedIPs[index]);
             console.log(bannedIPs);
-            bannedIPs.splice(index - 1, 1);
+            delete bannedIPs[index];
             console.log(bannedIPs);
         }
     }
