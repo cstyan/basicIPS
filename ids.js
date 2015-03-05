@@ -4,16 +4,32 @@ var shell = require('shelljs');
 var bufferString;
 
 var listOfIpAddresses = [];
+var bannedIPs = [];
 
 var ipRegEx = /\d+\.\d+\.\d+\.\d+/;
 
 var timeToCheck = process.argv[2];
 var timeBeforeBan = process.argv[3];
+var unbanTime = process.argv[4]
 
 if(!process.argv[2] || !process.argv[3]){
-    console.log("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds");
+    console.log("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds");
     process.exit(1);
 }
+
+setInterval(function(){
+    //check to see if we should unban people
+    currentTime = new Date();
+    for(var index in bannedIPs){
+        var indexTime = bannedIPs[index];
+        var difference = currentTime - indexTime;
+        if(difference > unbanTime){
+            console.log("Unbanning " + index + ".");
+            shell.exec("iptables -D INPUT -s " + index + " -j DROP");
+            bannedIPs.splice(index, 1);
+        }
+    }
+});
 
 var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
     this.ipAddress = ipAddress;
@@ -45,6 +61,8 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
             if(timeDifference <= timeBeforeBan){
                 shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                 console.log(this.ipAddress + " has been banned");
+                //add to banned array
+                this.bannedIPs[this.ipAddress] = new Date();
             }
 
             //check for slow scan
@@ -57,13 +75,15 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 //if the previous time difference is equal to this time difference
                 if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
                     console.log("Incrementing countSlowFails.");
-                    console.log("countSlowFails currently at: " + countSlowFails);
                     countSlowFails++;
+                    console.log("countSlowFails currently at: " + countSlowFails);
                 }
                 if(countSlowFails == timeToCheck){
                     shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                     console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
                     console.log(this.ipAddress + " has been banned");
+                    //add to banned array
+                    this.bannedIPs[this.ipAddress] = new Date()
                     //iptables -D INPUT -s this.ipAddress -j DROP
                 }
                 prev = timeDifference;
