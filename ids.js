@@ -29,7 +29,7 @@ setInterval(function(){
             bannedIPs.splice(index, 1);
         }
     }
-});
+}, 5000);
 
 var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
     this.ipAddress = ipAddress;
