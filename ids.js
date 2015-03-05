@@ -23,9 +23,13 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
     this.dateTime[0] = primaryDateTimeOfFirstViolation;
 
     this.addViolation = function(dateTimeOfViolation){
-      // we add a violation to the datetime array here
-      this.dateTime.push(dateTimeOfViolation);
-      this.checkIfBan();
+        //we only want to keep the last 10 failed attempts
+        if(this.dateTime.length > 10){
+            this.dateTime.shift();
+        }
+        // we add a violation to the datetime array here
+        this.dateTime.push(dateTimeOfViolation);
+        this.checkIfBan();
     }
 
     this.checkIfBan = function(){
@@ -42,16 +46,15 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 console.log(this.ipAddress + " has been banned");
             } else {
                 //check for slow scan
-                var prev = 0;
-                var numEqual = 0;
+                var countSlowFails = 0;
                 //check for slow scan/patterns
                 for(var i = 0; i < timeToCheck; i++){
                     var timeOne = this.dateTime[this.dateTime.length - 1 - i]
                     var timeTwo = this.dateTime[this.dateTime.length - 1 - (i + 1)]
                     var timeDifference = (timeOne - timeTwo) / 1000;
                     //if the previous time difference is equal to this time difference
-                    if(timeDifference == prev){
-                        numEqual++;
+                    if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
+                        countSlowFails++;
                     }
                     if(numEqual == timeToCheck){
                         shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
