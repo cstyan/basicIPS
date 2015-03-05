@@ -36,7 +36,8 @@ var unbanTime = process.argv[4];
 //interval to check for IP's to unban
 var unbanInterval = process.argv[5];
 
-if(!process.argv[2] || !process.argv[3]){
+//this needs to be changed since there are now more arguments
+if(!process.argv[5]){
     console.log("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds intervalToCheckForUnbansInMilliseconds");
     stream.write("Usage: node ips.js timesToCheckBeforeBanning timeBeforeBanInSeconds timeToBanForInSeconds intervalToCheckForUnbansInMilliseconds \n");
     process.exit(1);
@@ -167,13 +168,12 @@ ft.on('line', function(line){
         var ip = line.match(ipRegEx);
 
         if(!listOfIpAddresses[ip[0]]){
-
-        var lobj = new logObject(ip[0], new Date());
-        listOfIpAddresses[ip[0]] = lobj;
-    } else {
-        listOfIpAddresses[ip[0]].addViolation(new Date());
+            var lobj = new logObject(ip[0], new Date());
+            listOfIpAddresses[ip[0]] = lobj;
+        } else {
+            listOfIpAddresses[ip[0]].addViolation(new Date());
+        }
     }
-}
 
 });
 
