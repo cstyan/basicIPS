@@ -177,5 +177,4 @@ ft.on('line', function(line){
 
 });
 
-stream.end();
 });
