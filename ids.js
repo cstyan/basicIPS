@@ -54,6 +54,8 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                     var timeDifference = (timeOne - timeTwo) / 1000;
                     //if the previous time difference is equal to this time difference
                     if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
+                        console.log("Incrementing countSlowFails.");
+                        console.log("countSlowFails currently at: " + countSlowFails);
                         countSlowFails++;
                     }
                     if(countSlowFails == timeToCheck){
