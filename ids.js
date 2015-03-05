@@ -62,7 +62,7 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                 shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                 console.log(this.ipAddress + " has been banned");
                 //add to banned array
-                this.bannedIPs[this.ipAddress] = new Date();
+                bannedIPs[this.ipAddress] = new Date();
             }
 
             //check for slow scan
