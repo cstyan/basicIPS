@@ -56,10 +56,11 @@ var logObject = function(ipAddress, primaryDateTimeOfFirstViolation){
                     if(timeDifference >= ((timeBeforeBan / timeToCheck) - 1)){
                         countSlowFails++;
                     }
-                    if(numEqual == timeToCheck){
+                    if(countSlowFails == timeToCheck){
                         shell.exec("iptables -A INPUT -s " + this.ipAddress + " -j DROP");
                         console.log("Slow scan via periodical attempts detected from IP: " + this.ipAddress);
                         console.log(this.ipAddress + " has been banned");
+                        //iptables -D INPUT -s this.ipAddress -j DROP
                     }
                     prev = timeDifference;
                 }
